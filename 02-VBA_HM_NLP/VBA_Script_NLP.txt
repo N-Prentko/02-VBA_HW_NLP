@@ -1,0 +1,154 @@
+Sub For_Loop()
+
+'Set an initial variable for worksheet
+Dim WS As Worksheet
+
+    'For loop iterating through all WSs
+    For Each WS In Worksheets
+
+        'Activate WS
+        WS.Activate
+        
+        'Assign LastRow variable to calculation that finds the last row
+         LastRow = WS.Cells.SpecialCells(xlCellTypeLastCell).Row
+
+        'Set an initial variable for holding the ticker
+        Dim Ticker As String
+
+        'Set an initial variable for holding the total volume per ticker
+        Dim TotalStockVolume As Double
+
+        'Assign TotalStoclVolume a value
+        TotalStockVolume = 0
+
+        'Set an initial variable for holding the yearly change for each stock
+        Dim Yearly_Change As Double
+
+        'Assign Yearly_Change a value
+        Yearly_Change = 0
+
+        'Keep track of the location for each stock ticker in summary column
+        Dim Volume_Total_Row As Integer
+
+        'Assign a row for Volume_Total_Row
+        Volume_Total_Row = 2
+
+        'Set an initail variable for holding the beginning row of the first stocks opening amount
+        Dim Open_Amount_Row As Integer
+
+        'Assign a row for Open_Amount_Row
+        Open_Amount_Row = 2
+
+        'Declare Close_Amount_Row as a number
+         Dim Close_Amount_Row As Integer
+
+        'Assign a row for Close_Amount_Row
+        Close_Amount_Row = 2
+
+        'Assign OpenPrice as the value in cell(2,3)
+        OpenPrice = Cells(2, 3).Value
+
+        'Make value of J1 Yearly Change
+         WS.Range("J1").Value = "Yearly Change"
+    
+        'Make value of I1 Ticker
+        WS.Range("I1").Value = "Ticker"
+    
+        'Make value of K1 Percent Change
+        WS.Range("K1").Value = "Percent Change"
+    
+        'Make value of L1 Total Stock Volume
+        WS.Range("L1").Value = "Total Stock Volume"
+    
+        'Align column J to the right
+        WS.Range("J:J").HorizontalAlignment = xlRight
+    
+        'Align column K to the right
+        WS.Range("K:K").HorizontalAlignment = xlRight
+    
+        'Align column K to the right
+        WS.Range("L:L").HorizontalAlignment = xlRight
+    
+        'Adjust J column width
+        WS.Range("J:J").ColumnWidth = 12
+    
+        'Adjust K column width
+        WS.Range("K:K").ColumnWidth = 13
+    
+        'Adjust L column width
+        WS.Range("L:L").ColumnWidth = 17
+    
+    
+            'Commence Nested For Loop
+             For i = 2 To LastRow
+            
+            'Begin your conditional
+            'Check if we are still within the same stock ticker, if it is not...
+            If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+    
+            'Assign ClosingPrice a value
+            ClosingPrice = Cells(i, 6).Value
+        
+            'Reassign the value of Yearly_Change as the result of a calculation
+            Yearly_Change = ClosingPrice - OpenPrice
+         
+            'Reassign the value of OpenPrice as the first row +1 within the third column
+            OpenPrice = Cells(i + 1, 3).Value
+        
+            'Reassign the Open_Amount_Row as the Open_Amount_Row + 1
+            Open_Amount_Row = Open_Amount_Row + 1
+      
+            'Reassign the Close_Amount_Row as the Close_Amount_Row +1
+            Close_Amount_Row = Close_Amount_Row + 1
+       
+            'Assign column J as the Yearly_Change column
+            Range("J" & Close_Amount_Row).Value = Yearly_Change
+        
+            'Set the stock ticker
+            Ticker = Cells(i, 1).Value
+
+            'Add to the Total Stock Volume
+            TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+
+            'Print the ticker in the summary column
+            Range("I" & Volume_Total_Row).Value = Ticker
+
+            'Print the Total Stock Volume to the Summary Table
+            Range("L" & Volume_Total_Row).Value = TotalStockVolume
+
+            'Add one to the Volume Total Row
+            Volume_Total_Row = Volume_Total_Row + 1
+      
+            'Reset the Total Stock Volume Total
+            TotalStockVolume = 0
+
+            End If
+
+            'Add to the Total Stock Volume
+            TotalStockVolume = TotalStockVolume + Cells(i, 7).Value
+            
+           
+                    
+            'Commence conditional to highlight positive changes in green
+            If Yearly_Change >= 0 Then
+            
+            'Highlight positive changes in green
+            WS.Cells(Open_Amount_Row, 10).Interior.ColorIndex = 4
+            
+            Else
+            
+            'Highlight negative changes in red
+            WS.Cells(Open_Amount_Row, 10).Interior.ColorIndex = 3
+            
+            
+       
+            End If
+             
+            Next i
+    
+    Next WS
+  
+End Sub
+
+
+
